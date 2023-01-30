@@ -6,6 +6,30 @@ def load_main():
     start_screen.pack_forget()
 
 
+def load_score():
+    wpm = calculate_wpm()
+    wpm_label.configure(text=f"WPM : {wpm}")
+    score_screen.pack(fill=BOTH, expand=True)
+    main_screen.pack_forget()
+
+
+def reload_main():
+    time_label.configure(text=time_limit)
+    my_text.delete("1.0", END)
+    my_text.insert("1.0", "Click to Start timer")
+    type_text.focus_set()
+    wpm_label.configure(text=str(time_limit))
+    my_text.configure(text_color="#FECB89")
+    main_screen.pack(fill=BOTH, expand=True)
+    score_screen.pack_forget()
+
+
+def calculate_wpm():
+    typed_text = my_text.get("1.0", END).strip()
+    num_words = len(typed_text.split())
+    return num_words * 2
+
+
 def count_down(count):
     if count < 10:
         time_label.configure(text=f"0{count}")
@@ -13,6 +37,8 @@ def count_down(count):
         time_label.configure(text=count)
     if count > 0:
         win.after(1000, count_down, count - 1)
+    else:
+        load_score()
 
 
 def on_focus_in(event):
@@ -65,3 +91,16 @@ my_text = CTkTextbox(main_screen, width=420, height=180, spacing2=8, font=("", 1
 my_text.insert(END, "Click to Start timer")
 my_text.bind("<FocusIn>", on_focus_in)
 my_text.pack(pady=10)
+
+
+# Score Screen
+timesup_label = CTkLabel(score_screen, text="Times Up!", font=("", 32, "bold"))
+timesup_label.pack(pady=90)
+
+wpm_label = CTkLabel(score_screen, text="WPM", font=("", 20, "normal"))
+wpm_label.pack()
+
+return_btn = CTkButton(score_screen, text="← Try Again", command=reload_main, font=("", 18, "bold"), height=36)
+return_btn.pack(pady=25)
+
+win.mainloop()
