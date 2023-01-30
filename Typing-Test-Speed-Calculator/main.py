@@ -4,7 +4,23 @@ from customtkinter import *
 def load_main():
     main_screen.pack(fill=BOTH, expand=True)
     start_screen.pack_forget()
-    
+
+
+def count_down(count):
+    if count < 10:
+        time_label.configure(text=f"0{count}")
+    else:
+        time_label.configure(text=count)
+    if count > 0:
+        win.after(1000, count_down, count - 1)
+
+
+def on_focus_in(event):
+    if event.widget.get("1.0", "end-1c") == "Click to Start timer":
+        event.widget.delete("1.0", END)
+        my_text.configure(text_color="white")
+        count_down(time_limit)
+
 
 set_widget_scaling(1.3)
 win = CTk()
@@ -16,6 +32,7 @@ set_default_color_theme("green")
 start_screen = CTkFrame(win)
 main_screen = CTkFrame(win)
 score_screen = CTkFrame(win)
+
 
 # Start Screen
 start_screen.pack(fill=BOTH, expand=True)
@@ -39,3 +56,12 @@ text = "Lorem Ipsum is simply dummy text of the printing and typesetting industr
 type_text.insert("0.0", text)
 type_text.configure(state="disabled")
 type_text.pack(pady=20)
+
+time_limit = 30
+time_label = CTkLabel(main_screen, text=str(time_limit), font=("Courier", 35, "bold"), text_color="#FFA931")
+time_label.pack()
+
+my_text = CTkTextbox(main_screen, width=420, height=180, spacing2=8, font=("", 13), text_color="#FECB89", wrap=WORD)
+my_text.insert(END, "Click to Start timer")
+my_text.bind("<FocusIn>", on_focus_in)
+my_text.pack(pady=10)
