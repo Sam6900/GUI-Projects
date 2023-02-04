@@ -20,7 +20,27 @@ def on_focus_in(event):
         update_time_bar()
 
 
+def handle_writing():
+    global written_text, not_writing_time
+    text = my_text.get("1.0", END).strip()
+    if text == written_text:
+        not_writing_time += 0.5
+    else:
+        written_text = text
+        not_writing_time = 0
+
+    if 3 <= not_writing_time < 5:
+        time_bar.configure(progress_color="#DC3535")
+    elif 5 <= not_writing_time < 7:
+        time_bar.configure(progress_color="#CD0404")
+    elif not_writing_time == 7:
+        load_timeup()
+    else:
+        time_bar.configure(progress_color="#36719F")
+
+
 def update_time_bar():
+    handle_writing()
     progress = time_bar.get()
     if progress == 1:
         load_finish()
@@ -28,13 +48,20 @@ def update_time_bar():
     win.after(500, update_time_bar)
 
 
+def load_timeup():
+    timeup_screen.pack(fill=BOTH, expand=True)
+    main_screen.pack_forget()
+
+
 def load_finish():
     finish_screen.pack(fill=BOTH, expand=True)
     main_screen.pack_forget()
 
 
+# Global variables
 writing_time = 0
 written_text = ""
+not_writing_time = 0
 set_widget_scaling(1.3)
 
 win = CTk()
@@ -44,7 +71,7 @@ win.config(padx=20, pady=20)
 
 start_screen = CTkFrame(win)
 main_screen = CTkFrame(win)
-disappear_screen = CTkFrame(win)
+timeup_screen = CTkFrame(win)
 finish_screen = CTkFrame(win)
 
 
